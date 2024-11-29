@@ -12,6 +12,7 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
+  final API = 'akhfkinbvlknbv;kae';
   @override
   void initState() {
     super.initState();
@@ -23,7 +24,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       String city = 'london';
       final result = await http.get(
         Uri.parse(
-            'https://api.openweathermap.org/data/2.5/forecast?q=London&APPID=782e3cb969bd8b2c15eaa82e13c6933a'),
+            'https://api.openweathermap.org/data/2.5/forecast?q=London&APPID=$API'),
       );
       final data = jsonDecode(result.body);
       if (data['cod'] != '200') {
