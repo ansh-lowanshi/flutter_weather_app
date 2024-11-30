@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'additional_info.dart';
 import 'hourly_info.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
@@ -12,7 +14,8 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  final API = 'akhfkinbvlknbv;kae';
+  // final API2 = dotenv.env['API'];
+  final API2 = '9d1d0280854da31827c9a0055128e547';
   @override
   void initState() {
     super.initState();
@@ -24,7 +27,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       String city = 'london';
       final result = await http.get(
         Uri.parse(
-            'https://api.openweathermap.org/data/2.5/forecast?q=London&APPID=$API'),
+            'https://api.openweathermap.org/data/2.5/forecast?q=London&APPID=$API2'),
       );
       final data = jsonDecode(result.body);
       if (data['cod'] != '200') {
