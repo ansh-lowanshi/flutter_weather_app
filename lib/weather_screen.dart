@@ -18,7 +18,7 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  String API2 = dotenv.env['API'].toString();
+  String API2 = dotenv.env['API_KEY'].toString();
   @override
   void initState() {
     super.initState();
@@ -26,22 +26,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   Future getCurrentWeather() async {
-    try {
-      var result = await http.get(
+     try {
+      final apiKey = dotenv.env['API_KEY']; // Fetch the API key from .env
+
+      if (apiKey == null) {
+        throw 'API key is missing';
+      }
+    var result = await http.get(
         Uri.parse(
-            'https://api.weatherapi.com/v1/forecast.json?key=$API2&q=22.49158,77.40768&days=7&aqi=no&alerts=no'
-            ),
+          'https://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=22.49158,77.40768&days=7&aqi=no&alerts=no',
+        ),
       );
       var data = jsonDecode(result.body);
-      if (data['location']['tz_id'] != 'Asia/Kolkata') {
-        throw "an unaccepted error occured";
+       if (data['location']['tz_id'] != 'Asia/Kolkata') {
+        throw "An unaccepted error occurred";
       }
       return data;
     } catch (e) {
       throw e.toString();
     }
-
-    // print(result.body);
   }
 
   @override

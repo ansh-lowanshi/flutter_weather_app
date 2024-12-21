@@ -23,18 +23,15 @@ class _WeatherScreenState extends State<WeatherScreen2> {
   void initState() {
     super.initState();
     getCurrentWeather();
-    print('API Key: ${dotenv.env['API_KEY']}');
   }
 
   Future getCurrentWeather() async {
      try {
       final apiKey = dotenv.env['API_KEY']; // Fetch the API key from .env
-      print('API Key: ${dotenv.env['API_KEY']}');
 
       if (apiKey == null) {
         throw 'API key is missing';
       }
-      print('Using API Key: $apiKey');
     var result = await http.get(
         Uri.parse(
           'https://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=22.49158,77.40768&days=7&aqi=no&alerts=no',
