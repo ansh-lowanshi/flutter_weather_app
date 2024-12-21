@@ -23,27 +23,31 @@ class _WeatherScreenState extends State<WeatherScreen2> {
   void initState() {
     super.initState();
     getCurrentWeather();
+    print('API Key: ${dotenv.env['API_KEY']}');
   }
 
   Future getCurrentWeather() async {
-    try {
-      var result = await http.get(
+     try {
+      final apiKey = dotenv.env['API_KEY']; // Fetch the API key from .env
+      print('API Key: ${dotenv.env['API_KEY']}');
+
+      if (apiKey == null) {
+        throw 'API key is missing';
+      }
+      print('Using API Key: $apiKey');
+    var result = await http.get(
         Uri.parse(
-            'https://api.weatherapi.com/v1/forecast.json?key=ddced66cc3364cb399c190438241312&q=22.49158,77.40768&days=7&aqi=no&alerts=no'
-            // 'https://api.open-meteo.com/v1/forecast?latitude=22.49158&longitude=77.40768&current=temperature_2m,precipitation,rain,showers,cloud_cover&hourly=temperature_2m,precipitation_probability,rain,showers,cloud_cover&timezone=auto'
-            // https://api.openweathermap.org/data/2.5/forecast?q=London&APPID=$API2
-            ),
+          'https://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=22.49158,77.40768&days=7&aqi=no&alerts=no',
+        ),
       );
       var data = jsonDecode(result.body);
-      if (data['location']['tz_id'] != 'Asia/Kolkata') {
-        throw "an unaccepted error occured";
+       if (data['location']['tz_id'] != 'Asia/Kolkata') {
+        throw "An unaccepted error occurred";
       }
       return data;
     } catch (e) {
       throw e.toString();
     }
-
-    // print(result.body);
   }
 
   @override

@@ -18,7 +18,7 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  // String API2 = dotenv.env['API'].toString();
+  String API2 = dotenv.env['API'].toString();
   @override
   void initState() {
     super.initState();
@@ -29,9 +29,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     try {
       var result = await http.get(
         Uri.parse(
-            'https://api.weatherapi.com/v1/forecast.json?key=ddced66cc3364cb399c190438241312&q=22.49158,77.40768&days=7&aqi=no&alerts=no'
-            // 'https://api.open-meteo.com/v1/forecast?latitude=22.49158&longitude=77.40768&current=temperature_2m,precipitation,rain,showers,cloud_cover&hourly=temperature_2m,precipitation_probability,rain,showers,cloud_cover&timezone=auto'
-            // https://api.openweathermap.org/data/2.5/forecast?q=London&APPID=$API2
+            'https://api.weatherapi.com/v1/forecast.json?key=$API2&q=22.49158,77.40768&days=7&aqi=no&alerts=no'
             ),
       );
       var data = jsonDecode(result.body);
