@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 // import 'package:weather_icons/weather_icons.dart';
 
-class hourly extends StatelessWidget {
-  final String time;
-  final String temp;
+class daily extends StatelessWidget {
+  final String date;
+  final String tempMax;
+  final String tempMin;
   final String icon;
+  final String condition;
   final String pop;
-  const hourly(
+  final String sunrise;
+  final String sunset;
+  const daily(
       {super.key,
-      required this.time,
-      required this.temp,
+      required this.date,
+      required this.condition,
+      required this.tempMax,
+      required this.tempMin,
       required this.icon,
-      required this.pop});
+      required this.pop,
+      required this.sunrise,
+      required this.sunset});
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +42,18 @@ class hourly extends StatelessWidget {
       'Overcast': Icons.cloud,
     };
     return SizedBox(
-      width: 110,
+      width: 220,
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(5.0),
           child: Column(
             children: [
+              const SizedBox(
+                height: 10,
+              ),
               Text(
-                time,
-                style: const TextStyle(fontSize: 18),
+                date,
+                style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(
                 height: 8,
@@ -55,15 +66,35 @@ class hourly extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                '$temp°C',
+                '$condition',
                 style: const TextStyle(fontSize: 20),
               ),
-              const SizedBox(
-                height: 8,
+
+              Text(
+                'Max - $tempMax°C',
+                style: const TextStyle(fontSize: 18),
               ),
               Text(
-                '$pop %',
+                'Min - $tempMin°C',
                 style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(
+                height: 6,
+              ),
+              Text(
+                'Rain - $pop %',
+                style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(
+                height: 6,
+              ),
+              Text(
+                'Sunrise - $sunrise',
+                style: const TextStyle(fontSize: 15),
+              ),
+              Text(
+                'Sunset - $sunset',
+                style: const TextStyle(fontSize: 15),
               )
             ],
           ),

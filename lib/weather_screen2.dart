@@ -10,14 +10,14 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'package:weather_icons/weather_icons.dart';
 
-class WeatherScreen extends StatefulWidget {
-  const WeatherScreen({super.key});
+class WeatherScreen2 extends StatefulWidget {
+  const WeatherScreen2 ({super.key});
 
   @override
-  State<WeatherScreen> createState() => _WeatherScreenState();
+  State<WeatherScreen2> createState() => _WeatherScreenState();
 }
 
-class _WeatherScreenState extends State<WeatherScreen> {
+class _WeatherScreenState extends State<WeatherScreen2> {
   // String API2 = dotenv.env['API'].toString();
   @override
   void initState() {
@@ -216,7 +216,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
 
                   SizedBox(
-                    height: 182,
+                    height: 160,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 24,
@@ -280,7 +280,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
 
                   SizedBox(
-                    height: 350,
+                    height: 280,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 3,
@@ -397,4 +397,3 @@ class _WeatherScreenState extends State<WeatherScreen> {
     );
   }
 }
-

@@ -22,13 +22,14 @@ class additionalInfo extends StatelessWidget {
         const SizedBox(
           height: 8,
         ),
-        Text(label),
+        Text(label,
+        style: const TextStyle(fontSize: 17),),
         const SizedBox(
           height: 8,
         ),
         Text(
           value,
-          style: const TextStyle(fontSize: 25),
+          style: const TextStyle(fontSize: 17),
         )
       ],
     );
