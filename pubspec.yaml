@@ -32,7 +32,8 @@ dependencies:
     sdk: flutter
   http: ^1.2.2
   # weather_icons: ^2.0.0
-  flutter_dotenv: ^5.0.2  # Use the latest version available
+  flutter_dotenv: ^5.0.2 
+  geolocator: ^13.0.2
 
 
   # The following adds the Cupertino Icons font to your application.

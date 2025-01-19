@@ -34,7 +34,7 @@ class _WeatherScreenState extends State<WeatherScreen2> {
       }
     var result = await http.get(
         Uri.parse(
-          'https://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=22.49158,77.40768&days=7&aqi=no&alerts=no',
+          'https://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=22.49158,77.40768&days=3&aqi=no&alerts=no',
         ),
       );
       var data = jsonDecode(result.body);
@@ -282,67 +282,69 @@ class _WeatherScreenState extends State<WeatherScreen2> {
 
                   SizedBox(
                     height: 280,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 3,
-                      itemBuilder: (BuildContext context, int index) {
-
-                        var currentTime = DateTime.parse(
-                            data['location']['localtime'].toString());
-                        var time2 = DateFormat.H().format(currentTime);
-                        // var tme3 = time2.substring(0, 2);
-
-                        int targetIndex = index+1;
-
-                        // int targetIndex = int.parse(time2) + index + 1;
-
-                        // List<dynamic> forecastHours =
-                        //     data['forecast']['forecastday'][0]['hour'];
-                        // if (targetIndex < 0 ||
-                        //     targetIndex >= forecastHours.length) {
-                        //   // Do not return the widget if the index is out of bounds
-                        //   return const SizedBox
-                        //       .shrink(); // Return an empty placeholder widget
-                        // }
-
-                        var futureTime = DateTime.parse(data['forecast']
-                                    ['forecastday'][targetIndex]['date']
-                            .toString());
-                        var time4 =
-                            DateFormat('dd MMMM').format(futureTime).toString();
-
-                        final futureTempMax = data['forecast']['forecastday'][targetIndex]
-                                    ['day']['maxtemp_c']
-                            .toString();
-                        final futureTempMin = data['forecast']['forecastday'][targetIndex]
-                                    ['day']['mintemp_c']
-                            .toString();
-                        final icon = data['forecast']['forecastday'][targetIndex]
-                                    ['day']['condition']['text']
-                            .toString();
-                        final pop = data['forecast']['forecastday'][targetIndex]
-                                    ['day']['daily_chance_of_rain']
-                            .toString();
-                        final sunrise =  data['forecast']['forecastday'][targetIndex]
-                                    ['astro']['sunrise']
-                            .toString();
-                        final sunset =  data['forecast']['forecastday'][targetIndex]
-                                    ['astro']['sunset']
-                            .toString();
-                        final condition =  data['forecast']['forecastday'][targetIndex]
-                                    ['day']['condition']['text']
-                            .toString();
-                        return daily(
-                          date: time4,
-                          icon: icon,
-                          condition: condition,
-                          tempMax: futureTempMax,
-                          tempMin: futureTempMin,
-                          sunrise: sunrise,
-                          sunset: sunset,
-                          pop: pop,
-                        );
-                      },
+                    child: RepaintBoundary(
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        itemBuilder: (BuildContext context, int index) {
+                      
+                          var currentTime = DateTime.parse(
+                              data['location']['localtime'].toString());
+                          var time2 = DateFormat.H().format(currentTime);
+                          // var tme3 = time2.substring(0, 2);
+                      
+                          int targetIndex = index;
+                      
+                          // int targetIndex = int.parse(time2) + index + 1;
+                      
+                          // List<dynamic> forecastHours =
+                          //     data['forecast']['forecastday'][0]['hour'];
+                          // if (targetIndex < 0 ||
+                          //     targetIndex >= forecastHours.length) {
+                          //   // Do not return the widget if the index is out of bounds
+                          //   return const SizedBox
+                          //       .shrink(); // Return an empty placeholder widget
+                          // }
+                      
+                          var futureTime = DateTime.parse(data['forecast']
+                                      ['forecastday'][targetIndex]['date']
+                              .toString());
+                          var time4 =
+                              DateFormat('dd MMMM').format(futureTime).toString();
+                      
+                          final futureTempMax = data['forecast']['forecastday'][targetIndex]
+                                      ['day']['maxtemp_c']
+                              .toString();
+                          final futureTempMin = data['forecast']['forecastday'][targetIndex]
+                                      ['day']['mintemp_c']
+                              .toString();
+                          final icon = data['forecast']['forecastday'][targetIndex]
+                                      ['day']['condition']['text']
+                              .toString();
+                          final pop = data['forecast']['forecastday'][targetIndex]
+                                      ['day']['daily_chance_of_rain']
+                              .toString();
+                          final sunrise =  data['forecast']['forecastday'][targetIndex]
+                                      ['astro']['sunrise']
+                              .toString();
+                          final sunset =  data['forecast']['forecastday'][targetIndex]
+                                      ['astro']['sunset']
+                              .toString();
+                          final condition =  data['forecast']['forecastday'][targetIndex]
+                                      ['day']['condition']['text']
+                              .toString();
+                          return daily(
+                            date: time4,
+                            icon: icon,
+                            condition: condition,
+                            tempMax: futureTempMax,
+                            tempMin: futureTempMin,
+                            sunrise: sunrise,
+                            sunset: sunset,
+                            pop: pop,
+                          );
+                        },
+                      ),
                     ),
                   )
 

@@ -67,7 +67,7 @@ class daily extends StatelessWidget {
               ),
               Text(
                 '$condition',
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 16),
               ),
 
               Text(

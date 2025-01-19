@@ -8,6 +8,7 @@ import 'additional_info.dart';
 import 'hourly_info.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 // import 'package:weather_icons/weather_icons.dart';
 
 class WeatherScreen extends StatefulWidget {
@@ -19,26 +20,75 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen> {
   String API2 = dotenv.env['API_KEY'].toString();
+  double? latitude;
+  double? longitude;
+  bool isLocationFetched = false;
+
   @override
   void initState() {
     super.initState();
-    getCurrentWeather();
+    // 22.49158
+    // 77.40768
+    // getCurrentWeather(latitude!,longitude!);
+    requestLocationPermission();
   }
 
-  Future getCurrentWeather() async {
-     try {
+  Future<void> requestLocationPermission() async {
+    // bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!isLocationServiceEnabled) {
+    //   Geolocator.openLocationSettings();
+    //   print("Location services are disabled.");
+    //   // return;
+    // }
+
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      print("Location permission denied");
+    } else if (permission == LocationPermission.deniedForever) {
+      print("Location permission permanently denied.");
+    } else {
+      bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isLocationServiceEnabled) {
+      Geolocator.openLocationSettings();
+      print("Location services are disabled.");
+      // return;
+    }
+      getCurrentLocation();
+    }
+  }
+
+  Future<void> getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        latitude = position.latitude;
+        longitude = position.longitude;
+        isLocationFetched = true;
+        // print(latitude);
+        // print(longitude);
+      });
+      getCurrentWeather(latitude!, longitude!);
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future getCurrentWeather(double latitude, double longitude) async {
+    try {
       final apiKey = dotenv.env['API_KEY']; // Fetch the API key from .env
 
       if (apiKey == null) {
         throw 'API key is missing';
       }
-    var result = await http.get(
+      var result = await http.get(
         Uri.parse(
-          'https://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=22.49158,77.40768&days=7&aqi=no&alerts=no',
+          'https://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=$latitude,$longitude&days=3&aqi=no&alerts=no',
         ),
       );
       var data = jsonDecode(result.body);
-       if (data['location']['tz_id'] != 'Asia/Kolkata') {
+      if (data['location']['tz_id'] != 'Asia/Kolkata') {
         throw "An unaccepted error occurred";
       }
       return data;
@@ -46,19 +96,37 @@ class _WeatherScreenState extends State<WeatherScreen> {
       throw e.toString();
     }
   }
+// location request
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+            child: IconButton(
+              onPressed: (() {requestLocationPermission();}),
+              icon: Icon(Icons.location_on_outlined),
+              // padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+              iconSize: 30,
+            ),
+          )
+        ],
         centerTitle: true,
+        backgroundColor: Color(0xFF0B192C),
+        toolbarHeight: 80,
         title: const Text(
           'Weather App',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
         ),
       ),
-      body: FutureBuilder(
-        future: getCurrentWeather(),
+      body: !isLocationFetched
+          ? const Center(child: CircularProgressIndicator()) // Show loading indicator until location is fetched
+          : FutureBuilder(
+        future: latitude != null && longitude != null
+            ? getCurrentWeather(latitude!, longitude!)
+            : getCurrentWeather(22.49158, 77.40768),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -98,6 +166,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           // final currentHumidity = data['list'][0]['main']['humidity'];
           final currentIcon = data['current']['condition']['text'];
           final currentWind = data['current']['wind_kph'].toString();
+          final city = data['location']['name'].toString();
 
           return ListView(scrollDirection: Axis.vertical, children: [
             Padding(
@@ -135,7 +204,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               height: 20,
                             ),
                             Text(
-                              tme,
+                              tme+", "+city,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -206,18 +275,18 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
 
                   const Text(
-                    'Weather Forcast Hourly',
+                    'Hourly Forcast',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 15,
                   ),
 
                   SizedBox(
-                    height: 182,
+                    height: 160,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 24,
@@ -270,7 +339,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
 
                   const Text(
-                    'Weather Forcast Daily',
+                    'Daily Forcast',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -281,18 +350,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
 
                   SizedBox(
-                    height: 350,
+                    height: 260,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 3,
                       itemBuilder: (BuildContext context, int index) {
-
                         var currentTime = DateTime.parse(
                             data['location']['localtime'].toString());
                         var time2 = DateFormat.H().format(currentTime);
                         // var tme3 = time2.substring(0, 2);
 
-                        int targetIndex = index+1;
+                        int targetIndex = index;
 
                         // int targetIndex = int.parse(time2) + index + 1;
 
@@ -306,31 +374,31 @@ class _WeatherScreenState extends State<WeatherScreen> {
                         // }
 
                         var futureTime = DateTime.parse(data['forecast']
-                                    ['forecastday'][targetIndex]['date']
+                                ['forecastday'][targetIndex]['date']
                             .toString());
                         var time4 =
                             DateFormat('dd MMMM').format(futureTime).toString();
 
-                        final futureTempMax = data['forecast']['forecastday'][targetIndex]
-                                    ['day']['maxtemp_c']
+                        final futureTempMax = data['forecast']['forecastday']
+                                [targetIndex]['day']['maxtemp_c']
                             .toString();
-                        final futureTempMin = data['forecast']['forecastday'][targetIndex]
-                                    ['day']['mintemp_c']
+                        final futureTempMin = data['forecast']['forecastday']
+                                [targetIndex]['day']['mintemp_c']
                             .toString();
-                        final icon = data['forecast']['forecastday'][targetIndex]
-                                    ['day']['condition']['text']
+                        final icon = data['forecast']['forecastday']
+                                [targetIndex]['day']['condition']['text']
                             .toString();
                         final pop = data['forecast']['forecastday'][targetIndex]
-                                    ['day']['daily_chance_of_rain']
+                                ['day']['daily_chance_of_rain']
                             .toString();
-                        final sunrise =  data['forecast']['forecastday'][targetIndex]
-                                    ['astro']['sunrise']
+                        final sunrise = data['forecast']['forecastday']
+                                [targetIndex]['astro']['sunrise']
                             .toString();
-                        final sunset =  data['forecast']['forecastday'][targetIndex]
-                                    ['astro']['sunset']
+                        final sunset = data['forecast']['forecastday']
+                                [targetIndex]['astro']['sunset']
                             .toString();
-                        final condition =  data['forecast']['forecastday'][targetIndex]
-                                    ['day']['condition']['text']
+                        final condition = data['forecast']['forecastday']
+                                [targetIndex]['day']['condition']['text']
                             .toString();
                         return daily(
                           date: time4,
@@ -389,8 +457,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
         height: 70,
         width: 70,
         child: FloatingActionButton(
-          child: Icon(Icons.refresh,color: Colors.black,),
+            child: Icon(
+              Icons.refresh,
+              color: Colors.black,
+            ),
             onPressed: () {
+              // requestLocationPermission();
               setState(() {});
             },
             backgroundColor: Colors.white),
@@ -398,4 +470,3 @@ class _WeatherScreenState extends State<WeatherScreen> {
     );
   }
 }
-

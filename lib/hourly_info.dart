@@ -56,7 +56,7 @@ class hourly extends StatelessWidget {
               ),
               Text(
                 '$temp°C',
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 18),
               ),
               const SizedBox(
                 height: 8,
